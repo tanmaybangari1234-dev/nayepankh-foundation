@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NayePankh Volunteer Registration</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="top-nav">
+        <a href="dashboard.html" class="nav-link">View Dashboard</a>
+    </div>
+    <div class="container">
+        <h1>NayePankh Volunteer Registration</h1>
+        <p>Join us and contribute to social impact initiatives.</p>
+        <form id="volunteerForm">
+            <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="input-group">
+                <label>Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="input-group">
+                <label>City</label>
+                <input type="text" id="city" required>
+            </div>
+            <div class="input-group">
+                <label>Skills</label>
+                <input type="text" id="skills" placeholder="Web Development, Teaching, Design">
+            </div>
+            <div class="input-group">
+                <label>Availability</label>
+                <select id="availability">
+                    <option>Weekdays</option>
+                    <option>Weekends</option>
+                    <option>Full time</option>
+                </select>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

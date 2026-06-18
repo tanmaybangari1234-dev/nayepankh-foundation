@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NayePankh - Registrations Dashboard</title>
+
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+    }
+
+    body{
+        background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+        min-height:100vh;
+        padding:40px 20px;
+    }
+
+    .dashboard{
+        max-width:1200px;
+        margin:auto;
+    }
+
+    .back-link{
+        display:inline-block;
+        margin-bottom:20px;
+        color:white;
+        text-decoration:none;
+        font-size:18px;
+        font-weight:bold;
+    }
+
+    .header{
+        background:white;
+        padding:30px;
+        border-radius:20px;
+        margin-bottom:30px;
+        box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .header h1{
+        color:#667eea;
+        margin-bottom:10px;
+        font-size:28px;
+    }
+
+    .header p{
+        color:#666;
+        font-size:16px;
+    }
+
+    .error{
+        background:#fadbd8;
+        color:#c0392b;
+        padding:15px;
+        border-radius:10px;
+        margin-bottom:20px;
+        display:none;
+    }
+
+    .stats{
+        margin-bottom:30px;
+    }
+
+    .stat-card{
+        background:white;
+        padding:30px;
+        border-radius:15px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .stat-card h3{
+        color:#777;
+        margin-bottom:10px;
+    }
+
+    .number{
+        font-size:50px;
+        font-weight:bold;
+        color:#667eea;
+    }
+
+    .registrations-table{
+        background:white;
+        border-radius:20px;
+        overflow:hidden;
+        box-shadow:0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    .table-header{
+        background:linear-gradient(135deg,#667eea,#764ba2);
+        color:white;
+        display:grid;
+        grid-template-columns:1fr 1.5fr 1fr 1fr 1fr 1.5fr;
+        gap:10px;
+        padding:20px;
+        font-weight:bold;
+    }
+
+    .table-row{
+        display:grid;
+        grid-template-columns:1fr 1.5fr 1fr 1fr 1fr 1.5fr;
+        gap:10px;
+        padding:20px;
+        border-bottom:1px solid #eee;
+        align-items:center;
+    }
+
+    .table-row:hover{
+        background:#f8f9ff;
+    }
+
+    .badge{
+        display:inline-block;
+        padding:6px 12px;
+        background:#e3f2fd;
+        color:#1976d2;
+        border-radius:20px;
+        font-size:12px;
+        font-weight:bold;
+    }
+
+    .loading{
+        text-align:center;
+        padding:40px;
+        color:#666;
+    }
+
+    .empty-state{
+        text-align:center;
+        padding:40px;
+        color:#666;
+    }
+
+    @media(max-width:768px){
+
+        .table-header{
+            display:none;
+        }
+
+        .table-row{
+            display:block;
+        }
+
+        .table-row div{
+            margin-bottom:10px;
+        }
+    }
+</style>
+
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+
+<a href="index.html" class="back-link">
+    ← Back to Registration
+</a>
+
+<div class="header">
+    <h1>Volunteer Registrations Dashboard</h1>
+    <p>Track and manage all volunteer registrations</p>
+</div>
+
+<div id="errorMessage" class="error"></div>
+
+<div class="stats">
+    <div class="stat-card">
+        <h3>Total Registrations</h3>
+        <div class="number" id="totalCount">0</div>
+    </div>
+</div>
+
+<div class="registrations-table">
+
+    <div class="table-header">
+        <div>Name</div>
+        <div>Email</div>
+        <div>Phone</div>
+        <div>City</div>
+        <div>Availability</div>
+        <div>Registered At</div>
+    </div>
+
+    <div id="tableContent">
+        <div class="loading">
+            Loading registrations...
+        </div>
+    </div>
+
+</div>
+
+
+</div>
+
+<script>
+
+async function loadRegistrations(){
+
+    try{
+
+        const response = await fetch(
+            "http://localhost:5000/volunteers"
+        );
+
+        if(!response.ok){
+            throw new Error("Failed to fetch volunteers");
+        }
+
+        const registrations = await response.json();
+
+        document.getElementById("totalCount").textContent =
+            registrations.length;
+
+        displayRegistrations(registrations);
+
+        document.getElementById("errorMessage").style.display =
+            "none";
+
+    }catch(error){
+
+        console.error(error);
+
+        showError(
+            "Cannot connect to backend server. Make sure npm start is running."
+        );
+    }
+}
+
+function displayRegistrations(registrations){
+
+    const tableContent =
+        document.getElementById("tableContent");
+
+    if(registrations.length === 0){
+
+        tableContent.innerHTML = `
+            <div class="empty-state">
+                <h2>No registrations found</h2>
+                <p>Volunteer records will appear here.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+    tableContent.innerHTML =
+        registrations.map(reg => `
+
+            <div class="table-row">
+
+                <div>${reg.name || ""}</div>
+
+                <div>${reg.email || ""}</div>
+
+                <div>${reg.phone || ""}</div>
+
+                <div>${reg.city || ""}</div>
+
+                <div>
+                    <span class="badge">
+                        ${reg.availability || ""}
+                    </span>
+                </div>
+
+                <div>
+                    ${new Date(reg.created_at).toLocaleString()}
+                </div>
+
+            </div>
+
+        `).join("");
+}
+
+function showError(message){
+
+    const errorDiv =
+        document.getElementById("errorMessage");
+
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+}
+
+loadRegistrations();
+
+setInterval(loadRegistrations,5000);
+
+</script>
+
+</body>
+</html>
